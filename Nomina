@@ -1,0 +1,64 @@
+import re
+nomina=open("nomina.txt", "a")
+nomina.write(f"DATOS DEL TRABAJADOR, , , , , , , ,DEVENGADO, , ,DEDUCIBLE, , ,PRESTACIONES SOCIALES, , , ,TOTAL SIN CESANTIAS,TOTAL A PAGAR\nDOCUMENTO,TIPO DE DOCUMENTO,NOMBRES,APELLIDOS,CARGO,EDAD,TOTAL DIAS LABORADOS,DIAS EN EL MES,SALARIO BASICO,TOTAL BASICO,AUXILIO TRANSPORTE,APORTES SALUD,APORTES PENSION,FONDO SOLIDARIDAD PENSIONAL,PRIMA,CESANTIAS,INTERESES DE CESANTIAS,VACACIONES\n")
+while True:
+    print(f"Liquidacion de Nomina\nElige una opcion (1 ó 2)\n1. Ingresar datos para liquidar nomina\n2. Finalizar")
+    opcion=input()
+    if opcion!="1" and opcion!="2":
+        print("Opcion invalida")
+    elif opcion=="1":
+        while True:
+            tipo_documento=input("Ingrese tipo de documento del trabajador: ")
+            nombres=input("Ingrese primer y segundo nombre del trabajador: ")
+            apellidos=input("Ingrese primer y segundo apellido del trabajador: ")
+            cargo=input("Ingrese cargo laboral del trabajador: ")
+            if re.search("[^-\d-.-@]", tipo_documento) and re.search("[^-\d-.-@]", nombres) and re.search("[^-\d-.-@]", apellidos) and re.search("[^-\d-.-@]", cargo):
+                while True:
+                    try:
+                        documento=int(input("Ingrese numero de documento del trabajador: "))
+                        edad=int(input("Ingrese la edad del trabajador: "))
+                        dias=int(input("ingrese todos los dias laborados hasta finalizar contrato: "))
+                        dias_mes=int(input("Ingrese los dias laborados en el mes: "))
+                        devengado=int(input("Ingrese salario basico del trabajador: "))
+                        if documento>0 and edad>=0 and dias>=0 and dias_mes>=0 and devengado>0:
+                            documento
+                            edad
+                            dias
+                            dias_mes
+                            devengado
+                        else:
+                            print("Documento, edad, dias laborados y/o salario basico se ingreso valores negativos")
+                        break
+                    except ValueError:
+                        print("Documento, edad, dias laborados y/o salario basico se ingreso valor diferente a numerico")
+            else:
+                print("Tipo de documento, nombres, apellidos y/o cargo de trabajador se ingreso valor diferente a texto")
+            break
+        salario=round(devengado/30*dias_mes,2)
+        auxilio=round(117172/30*dias_mes,2)
+        salyaux=salario+auxilio
+        salud=round(devengado*0.04,2)
+        pension=round(devengado*0.04,2)
+        FSP=round(devengado*0.01,2)
+        prima=round(salyaux/360*dias,2)
+        cesantias=round(salyaux/360*dias,2)
+        int_cesantia=round(cesantias*0.12,2)
+        vacaciones=round(devengado/720*dias,2)
+        if devengado<2000001 and devengado<4000001:
+        	total_sin_cesantias=round(salyaux+prima+vacaciones-salud-pension,2)
+        	total=round(salyaux+prima+cesantias+int_cesantia+vacaciones-salud-pension,2)
+        	nomina.write(f"{documento},{tipo_documento.title()},{nombres.title()},{apellidos.title()},{cargo.title()},{edad},{dias},{dias_mes},{devengado},{salario},{auxilio},{salud},{pension},{0},{prima},{cesantias},{int_cesantia},{vacaciones},{total_sin_cesantias},{total}\n")
+        elif devengado>2000000 and devengado<4000001:
+        	total_sin_cesantias=round(salario+prima+vacaciones-salud-pension,2)
+        	total=round(salario+prima+cesantias+int_cesantia+vacaciones-salud-pension,2)
+        	nomina.write(f"{documento},{tipo_documento.title()},{nombres.title()},{apellidos.title()},{cargo.title()},{edad},{dias},{dias_mes},{devengado},{salario},{0},{salud},{pension},{0},{prima},{cesantias},{int_cesantia},{vacaciones},{total_sin_cesantias},{total}\n")
+        elif devengado>2000000 and devengado>4000000:
+        	total_sin_cesantias=round(salario+prima+vacaciones-salud-pension-FSP,2)
+        	total=round(salario+prima+cesantias+int_cesantia+vacaciones-salud-pension-FSP,2)
+        	nomina.write(f"{documento},{tipo_documento.title()},{nombres.title()},{apellidos.title()},{cargo.title()},{edad},{dias},{dias_mes},{devengado},{salario},{0},{salud},{pension},{FSP},{prima},{cesantias},{int_cesantia},{vacaciones},{total_sin_cesantias},{total}\n")
+    elif opcion=="2":
+        nomina=open("nomina.txt")
+        print(nomina.read())
+        print("Finalizado, ya se puede abrir el documento en excel.")
+        break
+nomina.close()
