@@ -1,0 +1,59 @@
+import re
+empleador=open("empleador.txt", "a")
+empleador.write(f"DATOS DEL TRABAJADOR, , , , , ,DEVENGADO, , ,TOTAL DEVENGADO,DEDUCIDO, , ,TOTAL DEDUCIDO,PRESTACIONES SOCIALES, , , ,TOTAL PRESTACIONES,TOTAL A PAGAR,SEGURIDAD SOCIAL, , ,TOTAL SEGURIDAD,PARAFISCALES, , ,TOTAL PARAFISCALES,APORTE EMPLEADOR,TOTAL EMPLEADOR,\nNUMERO DE DOCUMENTO,TIPO DE DOCUMENTO,NOMBRES,APELLIDOS,CARGO,DIAS LABORADOS,BASICO,SALARIO,AUX TRANSPORTE,SALUD,PENSION,FSP,PRIMA,CESANTIAS,INT CESANTIA,VACACIONES,ARL,SALUD,PENSION,CAJA COMPENSACION,SENA,ICBF\n")
+while True:
+    print(f"Liquidacion de Nomina\nElige una opcion (1 ó 2)\n1. Ingresar datos para liquidar nomina\n2. Finalizar")
+    opcion=input()
+    if opcion!="1" and opcion!="2":
+        print("Opcion invalida")
+    elif opcion=="1":
+        while True:
+            tipo_documento=input("Ingrese tipo de documento del trabajador: ")
+            nombres=input("Ingrese primer y segundo nombre del trabajador: ")
+            apellidos=input("Ingrese primer y segundo apellido del trabajador: ")
+            cargo=input("Ingrese cargo laboral del trabajador: ")
+            if re.search("[A-Z-a-z]", tipo_documento) and re.search("[A-Z-a-z]", nombres) and re.search("[A-Z-a-z]", apellidos) and re.search("[A-Z-a-z]", cargo):
+                while True:
+                    try:	
+                        documento=int(input("Ingrese numero de documento del trabajador: "))
+                        dias=int(input("ingrese dias laborados: "))
+                        devengado=int(input("Ingrese salario basico del trabajador: "))
+                        break;
+                    except ValueError:
+                        print("Documento, dias laborados y/o salario basico se ingreso valor diferente a numerico")
+                break;
+            else:
+                print("Tipo de documento, nombres, apellidos y/o cargo de trabajador se ingreso valor diferente a texto")
+		salario=round(devengado/30*dias,2)
+		auxilio=round(117172/30*dias,2)
+		salyaux=salario+auxilio
+		arl=round(devengado*0.0522,2)
+		salud=round(devengado*0.04,2)
+		pension=round(devengado*0.04,2)
+		fsp=round(devengado*0.01,2)
+		prima=round(salyaux/360*dias,2)
+        cesantias=round(salyaux/360*dias,2)
+        int_cesantia=round(cesantias*0.01,2)
+		vacaciones=round(devengado/720*dias,2)
+		prestaciones=prima+cesantias+int_cesantia+vacaciones
+		caja_compensacion=round(devengado*0.04,2)
+		sena=round(devengado*0.02,2)
+		icbf=round(devengado*0.03,2)
+		parafiscales=caja_compensacion+sena+icbf
+		salud_empleador=round(devengado*0.085)
+		pension_empleador=round(devengado*0.12)
+		seguridad=salud_empleador+pension_empleador+arl
+		aporte=parafiscales+seguridad
+		empleador=salario+salud+pension+prestaciones+aporte
+		if devengado<2000001 and devengado<4000001:
+			empleador.write(f"{documento},{tipo_documento.title()},{nombres.title()},{apellidos.title()},{cargo.title()},{dias},{devengado},{salario},{auxilio},{salario+auxilio},{salud},{pension},{0},{salud+pension},{prima},{cesantias},{int_cesantia},{vacaciones},{prestaciones},{salario+auxilio-salud-pension+prima+vacaciones},{arl},{salud_empleador},{pension_empleador},{seguridad},{caja_compensacion},{sena},{icbf},{parafiscales},{aporte},{empleador+auxilio}\n")
+		elif devengado>2000000 and devengado<4000001:
+			empleador.write(f"{documento},{tipo_documento.title()},{nombres.title()},{apellidos.title()},{cargo.title()},{dias},{devengado},{salario},{0},{salario},{salud},{pension},{0},{salud+pension},{prima},{cesantias},{int_cesantia},{vacaciones},{prestaciones},{salario-salud-pension+prima+vacaciones},{arl},{salud_empleador},{pension_empleador},{seguridad},{caja_compensacion},{sena},{icbf},{parafiscales},{aporte},{empleador}\n")
+		elif devengado>2000000 and devengado>4000000:
+			empleador.write(f"{documento},{tipo_documento.title()},{nombres.title()},{apellidos.title()},{cargo.title()},{dias},{devengado},{salario},{0},{salario},{salud},{pension},{fsp},{salud+pension+fsp},{prima},{cesantias},{int_cesantia},{vacaciones},{prestaciones},{salario-salud-pension-fsp+prima+vacaciones},{arl},{salud_empleador},{pension_empleador},{seguridad},{caja_compensacion},{sena},{icbf},{parafiscales},{aporte},{empleador}\n")
+	elif opcion=="2":
+		print("Finalizado, ya se puede abrir el documento en excel.")
+		empleador=open("empleador.txt")
+		print(empleador.read())
+		break
+empleador.close()
